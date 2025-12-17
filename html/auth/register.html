@@ -1,0 +1,406 @@
+<!--
+    Beta Orionis (Rigel) HTML Forms
+    Rigel The White Blue Giant, The Leg of Orion, Osiris
+    Amon Ra Eye
+    Login v.1.0.0
+    3bit.app | 2024
+-->
+
+<!-- form_content -->
+<div class="card text-bg-light col-sm-6 m-4 mx-auto" id="div_register"> <!-- style="width: 24rem" -->
+  <div class="card-body">
+    <h3 class="card-title" id="text_register">Register</h3> <!-- center -->
+    <form action="" onsubmit="return app.content.userRegister()">
+      <div class="mb-3">
+        <i class="fa fa-male input-icon" aria-hidden="true"></i>
+        <input type="text" id="input_first_name" class="form-control" placeholder="First name">
+      </div>
+      <div class="mb-3">
+        <i class="fa fa-male input-icon" aria-hidden="true"></i>
+        <input type="text" id="input_last_name" class="form-control" placeholder="Last name">
+      </div>
+      <div class="mb-3">
+        <i class="fa fa-user input-icon" aria-hidden="true"></i>
+        <input type="text" id="input_username" class="form-control" placeholder="Login name" onchange="app.content.checkUsername()">
+      </div>
+      <div class="mb-3">
+        <i class="fa fa-envelope input-icon" aria-hidden="true"></i>
+        <input type="text" id="input_email" class="form-control" placeholder="Email address" onchange="app.content.checkEmail()">
+      </div>
+      <div class="mb-3">
+        <i class="fa fa-phone input-icon" aria-hidden="true"></i>
+        <input type="text" id="input_phone" class="form-control" placeholder="Phone number">
+      </div>
+      <div class="mb-3">
+        <i class="fa fa-lock input-icon" aria-hidden="true"></i>
+        <input type="password" id="input_password" class="form-control" placeholder="Password">
+      </div>
+      <div class="mb-3">
+        <div>
+          <i class="material-icons" id="icon_number_1">looks_one</i>
+          <i class="material-icons" id="icon_number_2">looks_two</i>
+        </div>
+        <i class="fa fa-question input-icon" aria-hidden="true"></i>
+        <input type="text" id="input_special_code" maxlength="4" class="form-control" placeholder="Special code">
+      </div>
+      <div id="div_error_message" class="alert-message" style="display:none">
+        <span class="white-close-btn" onclick="this.parentElement.style.display='none'">&times;</span>
+        <p id="text_error_message"></p>
+      </div>
+      <div id="div_success_message" class="note-success message-text" style="display:none">
+        <span class="grey-close-btn" onclick="this.parentElement.style.display='none'">&times;</span>
+        <p id="text_success_message"></p>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="input_save_me" onchange="app.content.saveMe()" aria-checked="true">
+            <label class="form-check-label" id="label_save_me" for="input_save_me">Save me for next visit</label>
+          </div>
+        </div>
+        <div class="col">
+          <p id="text_registered">Already registered?</p>
+          <i class="fa fa-arrow-circle-right"></i>&nbsp;<a href="javascript:app.gotoLogin()" id="link_login">&nbsp;<small id="text_login">Login</small></a>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="d-grid col-4 mx-auto"><button class="btn btn-primary text-uppercase" id="button_submit" type="submit" title="Register">Register</button></div> <!-- justify-content-md-begin -->
+      </div>
+    </form>
+  </div>
+  <div class="card-footer">
+    <button type="button" class="btn btn-light" id="button_register_with_apple" title="Register with Apple" onclick="app.content.registerWithApple()">
+      <i class="fa fa-apple"></i>&nbsp;<small id="text_register_with_apple">Register with Apple</small>
+    </button>
+    <button type="button" class="btn btn-light" id="button_register_with_google" title="Register with Google" onclick="app.content.registerWithGoogle()">
+      <i class="fa fa-google"></i>&nbsp;<small id="text_register_with_google">Register with Google</small>
+    </button>
+  </div>
+</div>
+<!-- end_of_form_content -->
+
+<!-- script -->
+<script type="text/javascript">
+
+app.content = (function($, context) {
+
+  $.extend(this, context);
+
+  // Callback
+  var callback = getParam("callback");
+  if (callback) { setRegisterCallback(callback); }
+
+  // Style
+  var formStyle = getFormStyle();
+  if (formStyle) {
+    $("<style>" + formStyle + "</style>").appendTo("body");
+  }
+
+  function checkUsername() {
+    var inputUsername = document.getElementById('input_username');
+    if (inputUsername) {
+      var username = input_username.value.trim();
+      if (username.length > 0) {
+        var inputData = new Object();
+        inputData.username = username;
+        getMainService().getUserUsernameAvailable(inputData, "#text_error_message", afterUserUsernameAvailable, inputData);
+      }
+    }
+  }
+
+  function afterUserUsernameAvailable(callbackData, parsedResponse) {
+    if (parsedResponse) {
+      if (parsedResponse.status === "success") {
+        var textSuccessMessage = getMessage(getLanguageCode(), 0) + ": " + getMessage(getLanguageCode(), 1011);
+        $("#text_success_message").html(textSuccessMessage);
+        $("#div_success_message").show();
+      } else if (parsedResponse.status === "error") {
+        var textErrorMessage = getMessage(getLanguageCode(), -1018);
+        $("#text_error_message").html(textErrorMessage);
+        $("#div_error_message").show();
+      }
+    }
+  }
+
+  function checkEmail() {
+    var inputEmail = document.getElementById('input_email');
+    if (inputEmail) {
+      var email = inputEmail.value.trim();
+      if (email.length > 0 && isEmailAddress(email)) {
+        var inputData = new Object();
+        inputData.email = email;
+        getMainService().getUserEmailAvailable(inputData, "#text_error_message", afterUserEmailAvailable, inputData);
+      }
+    }
+  }
+
+  function afterUserEmailAvailable(callbackData, parsedResponse) {
+    if (parsedResponse) {
+      if (parsedResponse.status === "success") {
+        var textSuccessMessage = getMessage(getLanguageCode(), 0) + ": " + getMessage(getLanguageCode(), 1015);
+        $("#text_success_message").html(textSuccessMessage);
+        $("#div_success_message").show();
+      } else if (parsedResponse.status === "error") {
+        var textErrorMessage = getMessage(getLanguageCode(), -1017);
+        $("#text_error_message").html(textErrorMessage);
+        $("#div_error_message").show();
+      }
+    }
+  }
+
+  function userRegister(){
+    var inputUsername = document.getElementById('input_username');
+    var inputPassword = document.getElementById('input_password');
+    var inputFirstname = document.getElementById('input_first_name');
+    var inputLastname = document.getElementById('input_last_name');
+    var inputEmail = document.getElementById('input_email');
+    var inputPhone = document.getElementById('input_phone');
+    var inputSpecialCode = document.getElementById('input_special_code');
+
+    if (inputUsername && inputPassword && inputFirstname && inputLastname &&
+        inputEmail && inputPhone && inputSpecialCode) {
+
+      var username = inputUsername.value.trim();
+      var password = inputPassword.value.trim();
+      var firstName = inputFirstname.value.trim();
+      var lastName = inputLastname.value.trim();
+      var email = inputEmail.value.trim();
+      var phone = inputPhone.value.trim();
+
+      if (username.length === 0) { inputUsername.focus(); return false; }
+      if (password.length === 0) { inputPassword.focus(); return false; }
+      //if (phone.length === 0) { inputPhone.focus(); return false; }
+      if (!isEmailAddress(email)) { inputEmail.focus(); return false; }
+      if (inputSpecialCode.value !== specialCode) { inputSpecialCode.focus(); return false; }
+
+      var inputData = new Object();
+      inputData.username = username;
+      inputData.password = password;
+      inputData.firstName = firstName;
+      inputData.lastName = lastName;
+      inputData.email = email;
+      inputData.phone = phone;
+
+      getMainService().postUser(inputData, "#text_error_message", afterUserRegister, inputData);
+    }
+
+    return false; /* always false */
+  }
+
+  function afterUserRegister(callbackData, parsedResponse) {
+    if (parsedResponse && parsedResponse.status === "success") {
+      var inputSaveMe = document.getElementById("input_save_me");
+      if (inputSaveMe) {
+        if (inputSaveMe.checked) {
+          var username = callbackData.username;
+          var password = callbackData.password;
+          var encodedPassword = encodeData(username, password);
+          setCookie(COOKIE_USERNAME, username, COOKIE_ACTUAL_DAYS);
+          setCookie(COOKIE_PASSWORD, encodedPassword, COOKIE_ACTUAL_DAYS);
+          setCookie(COOKIE_SAVE_ME, true, COOKIE_ACTUAL_DAYS);
+        }
+      }
+
+      var tokens = parsedResponse.results[0];
+      var accessToken = tokens.accessToken;
+      var updateToken = tokens.updateToken;
+      getMainService().setAccessToken(accessToken);
+      getMainService().setUpdateToken(updateToken);
+      setCookie(COOKIE_ACCESS_TOKEN, accessToken, COOKIE_ACTUAL_DAYS);
+      setCookie(COOKIE_UPDATE_TOKEN, updateToken, COOKIE_ACTUAL_DAYS);
+
+      var textSuccessMessage = getMessage(getLanguageCode(), 0);
+      $("#text_success_message").html(textSuccessMessage);
+      $("#div_success_message").show();
+
+      getUser(); getSettings();
+
+      $(document).one("ajaxStop", function() {
+        if (parsedResponse && parsedResponse.status === "success") {
+          if (header) {
+            header.updateHeaderLanguage(getLanguageCode());
+          }
+
+          var registerCallback = getRegisterCallback();
+          if (registerCallback) {
+            if (typeof(registerCallback) === "function") { registerCallback(); }
+            else { window.location.href = registerCallback; }
+          } else {
+            window.location.href = window.location.protocol + "//" + window.location.host + window.location.pathname;
+          }
+        }
+      });
+    }
+  }
+
+  function saveMe() {
+    var inputSaveMe = document.getElementById("input_save_me");
+    if (inputSaveMe) {
+      if (inputSaveMe.checked) {
+        setCookie(COOKIE_SAVE_ME, true, COOKIE_ACTUAL_DAYS);
+      } else {
+        setCookie(COOKIE_SAVE_ME, false, COOKIE_ACTUAL_DAYS);
+      }
+    }
+  }
+
+  function checkSaveMe() {
+    var saveMe = getCookie(COOKIE_SAVE_ME);
+    var inputSaveMe = document.getElementById("input_save_me");
+    if (saveMe === "true") {
+      var inputUsername = document.getElementById("input_username");
+      var inputPassword = document.getElementById("input_password");
+
+      var username = getCookie(COOKIE_USERNAME);
+      var encodedPassword = getCookie(COOKIE_PASSWORD);
+      var password = encodeData(username, encodedPassword);
+
+      if (inputUsername) {
+        inputUsername.value = username;
+      }
+      if (inputPassword) {
+        inputPassword.value = password;
+      }
+
+      if (inputSaveMe) { inputSaveMe.checked = true; }
+    } else {
+      if (inputSaveMe) { inputSaveMe.checked = false; }
+    }
+  }
+
+  /* SPECIAL CODE */
+  var specialCode, number1, number2;
+  function makeSpecialCode() {
+    number1 = Math.floor(Math.random() * 6) + 1;
+    number2 = Math.floor(Math.random() * 6) + 1;
+    specialCode = number1.toString() + number2.toString();
+    return specialCode;
+  }
+
+  function getNumberIcon(number) {
+    var numberIcon = null;
+    switch (number) {
+      case 1:
+        numberIcon = "looks_one";
+        break;
+      case 2:
+        numberIcon = "looks_two";
+        break;
+      case 3:
+        numberIcon = "looks_3";
+        break;
+      case 4:
+        numberIcon = "looks_4";
+        break;
+      case 5:
+        numberIcon = "looks_5";
+        break;
+      case 6:
+        numberIcon = "looks_6";
+        break;
+    }
+    return numberIcon;
+  }
+
+  function registerWithApple() {
+
+  }
+
+  function registerWithGoogle() {
+
+  }
+
+  /* MULTI LANGUAGE */
+  function updateContentLanguage(languageCode) {
+    var inputUsername = document.getElementById('input_username');
+    var inputPassword = document.getElementById('input_password');
+    var inputFirstname = document.getElementById('input_first_name');
+    var inputLastname = document.getElementById('input_last_name');
+    var inputEmail = document.getElementById('input_email');
+    var inputPhone = document.getElementById('input_phone');
+    var inputSpecialCode = document.getElementById('input_special_code');
+
+    var textRegister = document.getElementById('text_register');
+    var labelSaveMe = document.getElementById('label_save_me');
+    var buttonSubmit = document.getElementById('button_submit');
+    var textRegistered = document.getElementById('text_registered');
+    var textLogin = document.getElementById('text_login');
+    var linkLogin = document.getElementById('link_login');
+
+    var iconNumber1 = document.getElementById('icon_number_1');
+    var iconNumber2 = document.getElementById('icon_number_2');
+
+    /* objects */
+    inputUsername.placeholder = getMessage(languageCode, 1011);
+    inputPassword.placeholder=getMessage(languageCode, 1012);
+    inputFirstname.placeholder = getMessage(languageCode, 1013);
+    inputLastname.placeholder = getMessage(languageCode, 1014);
+    inputEmail.placeholder = getMessage(languageCode, 1015);
+    inputPhone.placeholder = getMessage(languageCode, 1016);
+    inputSpecialCode.placeholder = getMessage(languageCode, 1017);
+
+    inputUsername.title = getMessage(languageCode, 1011);
+    inputPassword.title = getMessage(languageCode, 1012);
+    inputFirstname.title = getMessage(languageCode, 1013);
+    inputLastname.title = getMessage(languageCode, 1014);
+    inputEmail.title = getMessage(languageCode, 1015);
+    inputPhone.title = getMessage(languageCode, 1016);
+    inputSpecialCode.title = getMessage(languageCode, 1017);
+
+    /* captions */
+    textRegister.innerHTML = getMessage(languageCode, 1018);
+    labelSaveMe.innerHTML = getMessage(languageCode, 1019);
+    buttonSubmit.innerHTML = getMessage(languageCode, 1020);
+    buttonSubmit.title = getMessage(languageCode, 1021);
+    textRegistered.innerHTML = getMessage(languageCode, 1022);
+    textLogin.innerHTML = getMessage(languageCode, 1023);
+    linkLogin.title = getMessage(languageCode, 1024);
+
+    makeSpecialCode();
+    iconNumber1.innerHTML = getNumberIcon(number1);
+    iconNumber2.innerHTML = getNumberIcon(number2);
+  }
+
+  function onQueryStart() {
+    $("#text_error_message").empty();
+    $("#div_error_message").hide();
+    $("#text_success_message").empty();
+    $("#div_success_message").hide();
+  }
+
+  function onQueryStop() {
+    var textErrorMessage = $("#text_error_message").html();
+    if (textErrorMessage && textErrorMessage !== "") { $("#div_error_message").show(); }
+    else { $("#div_error_message").hide(); }
+
+    var textSuccessMessage = $("#text_success_message").html();
+    if (textSuccessMessage && textSuccessMessage !== "") { $("#div_success_message").show(); }
+    else { $("#div_success_message").hide(); }
+  }
+
+  function setQuery() {
+    $(document).off("ajaxStart"); $(document).off("ajaxStop");
+    $(document).ajaxStart(function() { onQueryStart(); }).ajaxStop(function() { onQueryStop(); });
+  }
+
+  checkSaveMe();
+  updateContentLanguage(getLanguageCode());
+  setQuery();
+
+  // Export
+  var o = new Object();
+  o.checkUsername = checkUsername;
+  o.checkEmail = checkEmail;
+  o.userRegister = userRegister;
+  o.saveMe = saveMe;
+  o.registerWithApple = registerWithApple;
+  o.registerWithGoogle = registerWithGoogle;
+  o.updateContentLanguage = updateContentLanguage;
+
+  return o;
+
+} (jQuery, app));
+
+</script>
+<!-- end_of_script -->

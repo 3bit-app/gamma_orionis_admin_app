@@ -1,0 +1,168 @@
+<!--
+    Beta Orionis (Rigel) HTML Forms
+    Rigel The White Blue Giant, The Leg of Orion, Osiris
+    Amon Ra Eye
+    Login v.1.0.0
+    3bit.app | 2024
+-->
+
+<!-- form_content -->
+<div id="div_home">
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <div id="div_error_message" class="alert-message" style="display:none">
+        <span class="white-close-btn" onclick="this.parentElement.style.display='none'">&times;</span>
+        <p id="text_error_message"></p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card m-4">
+        <div class="card-body">
+          <i class="material-icons" style="font-size:36px">person_pin</i>
+          <h3 class="card-title" id="title_login">Login</h3>
+          <p class="card-text" id="text_login">Login page for Sign in to User account.</p>
+          <button onclick="app.gotoLogin()" class="btn btn-primary" id="button_login">Perform Login</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card m-4">
+        <div class="card-body">
+          <i class="material-icons" style="font-size:36px">contact_mail</i>
+          <h3 class="card-title" id="title_register">Register</h3>
+          <p class="card-text" id="text_register">Register page for Create new User.</p>
+          <button onclick="app.gotoRegister()" class="btn btn-primary" id="button_register">Register</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card m-4">
+        <div class="card-body">
+          <i class="material-icons" style="font-size:36px">web</i>
+          <h3 class="card-title" id="title_admin_panel">Admin panel</h3>
+          <p class="card-text" id="text_admin_panel">Admin panel for Administrative and Data manipulate.</p>
+          <button onclick="app.gotoAdmin()" class="btn btn-primary" id="button_admin_panel">Admin panel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card m-4">
+        <div class="card-body">
+          <i class="material-icons" style="font-size:36px">dashboard</i>
+          <h3 class="card-title" id="title_cabinet">Cabinet</h3>
+          <p class="card-text" id="text_cabinet">Cabinet page of User profile.</p>
+          <button onclick="app.gotoCabinet()" class="btn btn-primary" id="button_cabinet">Open Cabinet</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card m-4">
+        <div class="card-body">
+          <i class="material-icons" style="font-size:36px">event</i>
+          <h3 class="card-title" id="title_calendar">Calendar</h3>
+          <p class="card-text" id="text_calendar">Calendar page of Customers Orders.</p>
+          <button onclick="app.gotoCalendar()" class="btn btn-primary" id="button_calendar">Open Calendar</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card m-4">
+        <div class="card-body">
+          <i class="material-icons" style="font-size:36px">map</i>
+          <h3 class="card-title" id="title_map">Map</h3>
+          <p class="card-text" id="text_map">Map page of Orders and Drivers locations.</p>
+          <button onclick="app.gotoMap()" class="btn btn-primary" id="button_map">Open Map</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end_of_form_content -->
+
+<!-- script -->
+<script type="text/javascript">
+
+app.content = (function($, context) {
+
+  $.extend(this, context);
+
+  /* MULTI LANGUAGE */
+  function updateContentLanguage(languageCode) {
+    var titleLogin = document.getElementById('title_login');
+    var textLogin = document.getElementById('text_login');
+    var buttonLogin = document.getElementById('button_login');
+    var titleRegister = document.getElementById('title_register');
+    var textRegister = document.getElementById('text_register');
+    var buttonRegister = document.getElementById('button_register');
+    var titleAdminPanel = document.getElementById('title_admin_panel');
+    var textAdminPanel = document.getElementById('text_admin_panel');
+    var buttonAdminPanel = document.getElementById('button_admin_panel');
+    var titleCabinet = document.getElementById('title_cabinet');
+    var textCabinet = document.getElementById('text_cabinet');
+    var buttonCabinet = document.getElementById('button_cabinet');
+    var titleCalendar = document.getElementById('title_calendar');
+    var textCalendar = document.getElementById('text_calendar');
+    var buttonCalendar = document.getElementById('button_calendar');
+    var titleMap = document.getElementById('title_map');
+    var textMap = document.getElementById('text_map');
+    var buttonMap = document.getElementById('button_map');
+
+    /* buttons */
+    buttonLogin.title = getMessage(languageCode, 1032);
+    buttonLogin.innerHTML = getMessage(languageCode, 1032);
+    buttonRegister.title = getMessage(languageCode, 1035);
+    buttonRegister.innerHTML = getMessage(languageCode, 1035);
+    buttonAdminPanel.title = getMessage(languageCode, 1038);
+    buttonAdminPanel.innerHTML = getMessage(languageCode, 1038);
+    buttonCabinet.title = getMessage(languageCode, 1041);
+    buttonCabinet.innerHTML = getMessage(languageCode, 1041);
+    buttonCalendar.title = getMessage(languageCode, 1044);
+    buttonCalendar.innerHTML = getMessage(languageCode, 1044);
+    buttonMap.title = getMessage(languageCode, 1047);
+    buttonMap.innerHTML = getMessage(languageCode, 1047);
+
+    /* captions */
+    titleLogin.innerHTML = getMessage(languageCode, 1030);
+    textLogin.innerHTML = getMessage(languageCode, 1031);
+    titleRegister.innerHTML = getMessage(languageCode, 1033);
+    textRegister.innerHTML = getMessage(languageCode, 1034);
+    titleAdminPanel.innerHTML = getMessage(languageCode, 1036);
+    textAdminPanel.innerHTML = getMessage(languageCode, 1037);
+    titleCabinet.innerHTML = getMessage(languageCode, 1039);
+    textCabinet.innerHTML = getMessage(languageCode, 1040);
+    titleCalendar.innerHTML = getMessage(languageCode, 1042);
+    textCalendar.innerHTML = getMessage(languageCode, 1043);
+    titleMap.innerHTML = getMessage(languageCode, 1045);
+    textMap.innerHTML = getMessage(languageCode, 1046);
+
+    var currentUser = getCurrentUser();
+
+    if (currentUser) {
+      buttonAdminPanel.classList.remove("disabled");
+      buttonCabinet.classList.remove("disabled");
+      buttonCalendar.classList.remove("disabled");
+      buttonMap.classList.remove("disabled");
+    } else {
+      buttonAdminPanel.classList.add("disabled");
+      buttonCabinet.classList.add("disabled");
+      buttonCalendar.classList.add("disabled");
+      buttonMap.classList.add("disabled");
+    }
+  }
+
+  updateContentLanguage(getLanguageCode());
+  
+  // Export
+  var o = new Object();
+  o.updateContentLanguage = updateContentLanguage;
+
+  return o;
+
+} (jQuery, app));
+
+</script>
+<!-- end_of_script -->

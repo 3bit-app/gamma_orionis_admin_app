@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gamma Orionis</title>
+    <meta name="description" content="Gamma Orionis ★ Bellātrix, The Lion warrior, Conqueror">
+    <meta name="author" content="3bit.app">
+    <!-- styles -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300&display=swap">
+    <!-- link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300&display=swap" -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- scripts -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.0/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="js/moment/moment-tz-data.min.js"></script>
+    <!-- When use type = module for firebase then comment init in app.js -->
+    <!-- script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script -->
+    <style>
+      /* google font */
+      body {
+        font-family: 'Open Sans', sans-serif;
+        /* font-family: 'Roboto', sans-serif; */
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- module -->
+    <script type="module" src="js/app.js"></script>
+
+    <!-- script -->
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        app.init();
+
+        console.info('Welcome to Gamma Orionis ★ Bellātrix, The White Blue Giant!');
+
+        document.addEventListener("ajaxStop", async () => {
+          app.postInit();
+
+          console.info('Post initialization complete. Enjoy your stay at Gamma Orionis!');
+        }, { once: true });
+
+      });
+    </script>    
+
+    <!-- html -->
+    <div id="div_header"></div>
+    <div id="div_content">
+      <div style="width: 100%; height: 10rem;"></div>
+      <div class="d-flex justify-content-center">
+        <div class="spinner-grow" style="width: 5rem; height: 5rem;" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <br/>
+      </div>
+      <div class="d-flex justify-content-center">
+        <b>Gamma Orionis</b>
+      </div>
+      <div class="d-flex justify-content-center">
+        <small>Bellātrix &#9733; The White Blue Giant</small>
+      </div>
+    </div>
+    <div id="div_footer"></div>
+
+</body>
+</html>

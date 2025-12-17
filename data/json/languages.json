@@ -1,0 +1,20 @@
+[
+  {
+    "name": "ENGLISH",
+    "label": "English",
+    "code": "en",
+    "file": "language_en.json"
+  },
+  {
+    "name": "RUSSIAN",
+    "label": "Русский",
+    "code": "ru",
+    "file": "language_ru.json"
+  },
+  {
+    "name": "UKRAINIAN",
+    "label": "Українська",
+    "code": "uk",
+    "file": "language_uk.json"
+  }
+]

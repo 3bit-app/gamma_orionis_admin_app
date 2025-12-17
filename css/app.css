@@ -1,0 +1,858 @@
+/*
+ *   Beta Orionis (Rigel) CSS Styles
+ *   Rigel The White Blue Giant, The Leg of Orion, Osiris
+ *   Amon Ra Eye
+ *   App v.1.0.0
+ *   3bit.app | 2024
+ */
+
+/* ALERT */
+
+/*
+<div class="alert-message">
+  <span class="white-close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+  This is an alert box.
+</div>
+*/
+
+/* The alert message box */
+.alert-message {
+  padding: 20px;
+  background-color: #F44336; /* Red */
+  color: white;
+  margin-bottom: 15px;
+}
+
+/* The close button */
+.white-close-btn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.grey-close-btn {
+  margin-left: 15px;
+  color: grey;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.white-close-btn:hover {
+  color: black;
+}
+.grey-close-btn:hover {
+  color: white;
+}
+
+/*
+<div class="note-danger">
+  <p><strong>Danger!</strong> Some text...</p>
+  <span class="grey-close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+</div>
+*/
+
+.note-danger {
+  background-color: #FFDDDD; /* red */
+  border-left: 3px solid #F44336;
+}
+
+.note-success {
+  background-color: #DDFFDD; /* green */
+  border-left: 3px solid #4CAF50;
+}
+
+.note-info {
+  background-color: #E7F3FE; /* blue */
+  border-left: 3px solid #2196F3;
+}
+
+.note-warning {
+  background-color: #FFFFCC; /* yellow */
+  border-left: 3px solid #FFEB3B;
+}
+
+.note-tip {
+  background-color: #fcf8e3; /* tip #FFFACD  FCF8E3*/
+  border-left: 3px solid #FFEB3B;
+}
+
+.note-trans {
+  background-color: white;
+  border-left: 3px solid darkgrey;
+}
+
+.note-trans-red {
+  background-color: white;
+  border-left: 3px solid #F44336;
+}
+
+.note-trans-green {
+  background-color: white;
+  border-left: 3px solid #4CAF50;
+}
+
+.note-trans-blue {
+  background-color: white;
+  border-left: 3px solid #2196F3;
+}
+
+.note-trans-black {
+  background-color: white;
+  border-left: 3px solid #72777c; /* grey */
+}
+
+.note-grey-black {
+  background-color: #FAFAFA;
+  border-left: 3px solid #72777c; /* grey */
+}
+
+.note-tip-black {
+  background-color: #fcf8e3; /* tip #FFFACD  FCF8E3*/
+  border-left: 3px solid #343a40; /* bg_dark */
+}
+
+.note-text {
+  padding: 5px;
+}
+
+.message-text {
+  padding: 20px;
+  margin-bottom: 15px;
+}
+
+.note-danger button, .note-success button, .note-tip button, .note-info button, .note-warning button,
+.note-trans button, .note-trans-red button, .note-trans-green button, .note-trans-blue button, .note-trans-black button .note-grey-black .note-tip-black button {
+  margin: 5px;
+}
+
+.note-danger img, .note-success img, .note-tip img, .note-info img, .note-warning img,
+.note-trans img, .note-trans-red img, .note-trans-green img, .note-trans-blue img, .note-trans-black img .note-tip-black img {
+  padding: 0px;
+}
+
+.note-button-no-margin button {
+  margin: 0px;
+}
+
+/* CARDBOX */
+
+.card-box {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  /*max-width: 300px;*/
+  margin: auto;
+  padding: 12px;
+  /*text-align: center;*/
+  font-family: arial;
+}
+
+.card-box button {
+  border: none;
+  outline: 0;
+  padding: 12px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+.card-box button:hover {
+  opacity: 0.9;
+}
+
+.card-box:hover {
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+/* CHECKBOX */
+
+ /* Customize the label (the container) */
+.checkbox-container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.checkbox-container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a style background */
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #eee;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.checkbox-container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+/* CHIP */
+
+/*
+<div class="chip-message"><img src="" alt="" width="96" height="96">
+  This is an chip box.
+  <span class="chip-message-btn" onclick=""></span>
+</div>
+*/
+.chip-message {
+    display: inline-block;
+    padding: 0 25px;
+    height: 50px;
+    font-size: 18px;
+    line-height: 50px;
+    border-radius: 25px;
+    background-color: #F5F5F5;
+}
+
+.chip-message img {
+    float: left;
+    margin: 0 10px 0 -25px;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+
+.chip-message-btn {
+    padding-left: 10px;
+    color: #888;
+    font-weight: bold;
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.chip-message-btn:hover {
+    color: #000;
+}
+
+/* COLLAPSIBLE */
+
+ /* Style the button that is used to open and close the collapsible content */
+.collapsible {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.collapsible.active, .collapsible:hover {
+  background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.collapsible-content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #F1F1F1;
+}
+
+/* Add a symbol to each button to indicate whether the collapsible content is open or closed */
+.collapsible:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.collapsible.active:after {
+  content: "\2212";
+}
+
+/* BOXES */
+
+/* background */
+
+.bg-green {
+  background-color: #00a65a !important;
+}
+.bg-blue {
+  background-color: #0073b7 !important;
+}
+.bg-orange {
+  background-color: #ff851b !important;
+}
+.bg-grey {
+  background-color: grey !important;
+}
+.bg-light-grey {
+  background-color: lightgrey !important;
+}
+.bg-tip {
+  background-color: #fcf8e3 !important;
+}
+
+/* report box */
+
+.report-box {
+  border-radius: 5px;
+  position: relative;
+  display: block;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.report-box .text {
+  padding: 10px;
+  color: #fff !important;
+  font-size: 16px;
+}
+
+.report-box .icon {
+  -webkit-transition: all .3s linear;
+  -o-transition: all .3s linear;
+  transition: all .3s linear;
+  position: absolute;
+  top: -10px;
+  right: 10px;
+  z-index: 0;
+  font-size: 90px;
+  color: rgba(0,0,0,0.15);
+}
+
+.report-box .footer {
+  position: relative;
+  text-align: center;
+  padding: 3px 0;
+  color: rgba(255,255,255,0.8);
+  display: block;
+  z-index: 10;
+  background: rgba(0,0,0,0.1);
+  text-decoration: none;
+}
+
+/* info box */
+
+.info-box {
+  display: block;
+  min-height: 90px;
+  background: #fff;
+  width: 100%;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  border-radius: 2px;
+  margin-bottom: 15px;
+}
+
+.info-box .text {
+  text-transform: uppercase;
+  display: block;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.info-box .icon {
+  border-top-left-radius: 2px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 2px;
+  display: block;
+  float: left;
+  height: 90px;
+  width: 90px;
+  text-align: center;
+  font-size: 45px;
+  line-height: 90px;
+  background: rgba(0,0,0,0.2);
+}
+
+.info-box .content {
+  padding: 5px 10px;
+  margin-left: 90px;
+}
+
+.info-box .number {
+  display: block;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.info-box .description {
+  margin: 0;
+  display: block;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* item box */
+
+.item-box {
+  -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+  border-radius: 3px;
+  margin-top: 0;
+  background: #fff;
+  /* color: #444; */
+  margin-left: 60px;
+  margin-right: 15px;
+  padding: 0;
+  position: relative;
+}
+
+.item-box > .label {
+  color: #999;
+  float: right;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.item-box > .header {
+  margin: 0;
+  /* color: #555; */
+  border-bottom: 1px solid #F4F4F4;
+  padding: 10px;
+  font-size: 16px;
+  line-height: 1.1;
+}
+
+.item-box > .content, .item-box > .footer {
+  padding: 10px;
+}
+
+/* OVERLAY */
+
+.overlay-form {
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2;
+}
+
+.overlay-form .text {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  font-size: 30px;
+  color: white;
+  transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+}
+
+.overlay-form .button {
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+}
+
+.overlay-form .button_left {
+  position: absolute;
+  top: 25%;
+  left: 40%;
+  transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+}
+
+.overlay-form .button_right {
+  position: absolute;
+  top: 25%;
+  left: 60%;
+  transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+}
+
+/* ROTATE */
+
+div.rotate {
+  position: relative;
+  margin: 0 auto;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: infinite rotate-block 2s;
+  -moz-animation: infinite rotate-block 2s;
+  -o-animation: infinite rotate-block 2s;
+  animation: infinite rotate-block 2s;
+  border-left:2px solid #263238;
+  border-radius: 100%
+}
+@-webkit-keyframes rotate-block {
+  0%   {-webkit-transform: rotate(0deg);}
+  100% {-webkit-transform: rotate(360deg);}
+}
+@-moz-keyframes rotate-block {
+  0%   {-moz-transform: rotate(0deg);}
+  100% {-moz-transform: rotate(360deg);}
+}
+@-o-keyframes rotate-block {
+  0%   {-o-transform: rotate(0deg);}
+  100% {-o-transform: rotate(360deg);}
+}
+@keyframes rotate-block {
+  0%   {transform: rotate(0deg);}
+  100% {transform: rotate(360deg);}
+}
+
+div.loader {
+  border: 16px solid #F3F3F3;
+  border-radius: 50%;
+  border-top: 16px solid #263238;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* SLIDE */
+
+/* Slideshow */
+/* in Bootstrap
+* {
+  box-sizing: border-box;
+}
+*/
+
+/* Position the image container (needed to position the left and right arrows) */
+.slide-container {
+  position: relative;
+}
+
+/* Hide the images by default */
+.slide-picture {
+  display: none;
+}
+
+/* Add a pointer when hovering over the thumbnail images */
+.slide-cursor {
+  cursor: pointer;
+}
+
+/* Next & previous buttons */
+.slide-prev, .slide-next {
+  cursor: pointer;
+  position: absolute;
+  top: 40%;
+  width: auto;
+  padding: 16px;
+  margin-top: -50px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 0 3px 3px 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Position the "next button" to the right */
+.slide-next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.slide-prev:hover,
+.slide-next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Label text */
+.slide-label {
+  color: #F2F2F2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+/* Button */
+.slide-button {
+  position: absolute;
+  top: 40%;
+  margin-left: 40%;
+  margin-right: 40%;
+}
+
+/* Container for image text */
+.slide-caption {
+  text-align: center;
+  background-color: #222;
+  padding: 2px 16px;
+  color: white;
+}
+
+.slide-row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Five columns side by side */
+.slide-column {
+  float: left;
+  width: 20%;
+}
+
+/* Add a transparency effect for thumnbail images */
+.slide-thumbnail {
+  opacity: 0.6;
+}
+
+.slide-active, .slide-thumbnail:hover {
+  opacity: 1;
+}
+
+/* SWITCH */
+
+ /* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  display:none;
+}
+
+/* The switch_slider */
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .switch-slider {
+  background-color: #eee;
+}
+
+input:focus + .switch-slider {
+  box-shadow: 0 0 1px #eee;
+}
+
+input:checked + .switch-slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded switch_sliders */
+.switch-slider.round {
+  border-radius: 34px;
+}
+
+.switch-slider.round:before {
+  border-radius: 50%;
+}
+
+/* Sign-CheckOut */
+.sign-checkout {
+  display: inline-block;
+  width: 25px;
+  height: 40px;
+  margin: -3px 10px 3px;
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.small-sign-checkout {
+  display: inline-block;
+  width: 15px;
+  height: 20px;
+  margin: -3px 10px 3px;
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Card-Info */
+.card-info:hover {
+  cursor: pointer;
+}
+
+/* Admin-Panel-Select */
+.admin-panel-select {
+  width: 200px;
+}
+
+/* Icon-Input-Hint */
+p.input-after-hint {
+  font-size: 10px;
+  margin-top: -42px;
+  padding-left: 38px;
+  color: #bdbdbd;
+  /*position: relative;*/
+  position: absolute;
+  z-index: 1;
+  float: left;
+}
+p.input-before-hint {
+  font-size: 10px;
+  margin-bottom: -14px;
+  padding-left: 38px;
+  color: #bdbdbd;
+  /*position: relative;*/
+  position: absolute;
+  z-index: 1;
+  float: left;
+}
+p.input-hint {
+  font-size: 10px;
+  margin-bottom: -14px;
+  padding-left: 42px;
+  color: #bdbdbd;
+  /*position: relative;*/
+  position: absolute;
+  z-index: 1;
+  float: left;
+}
+
+/* Icon-Input */
+i.input-icon, i.input-icon-left {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  /*margin-right: -40px;*/
+  text-align: center;
+  /*position: relative;*/
+  position: absolute;
+  z-index: 1;
+  float: left;
+}
+i.input-icon + input.form-control, i.input-icon-left + input.form-control {
+  padding-left: 34px;
+  padding-right: 34px;
+}
+i.input-icon-right {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  /*margin-top: -2px;*/
+  right: 14px;
+  text-align: center;
+  /*position: relative;*/
+  position: absolute;
+  z-index: 1;
+  float: right;
+}
+input.form-control + i.input-icon-right, i.input-icon-right + input.form-control {
+  padding-right: 34px;
+}
+
+/* Chosen | Pickup-Dropoff */
+/*.chosen-container-single .chosen-single { height: 40px; line-height: 36px; background: none; border-radius: 4px; border: 1px solid #ced4da; } .chosen-container { font-size: 16px; } .form-control { padding: 20px 10px; }*/
+/*.chosen-container-single .chosen-single div b{background-position:0px 10px} .chosen-container-single.chosen-with-drop .chosen-single div b{background-position:-18px 10px}*/
+.form-control.input-image-icon {
+  border-radius: 4px;
+  padding: 20px 40px;
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  background-size: 24px 24px;
+}
+
+/*hr*/
+/* Dashed border */
+hr.line-dashed {
+  border-top: 1px dashed #e0e0e0; /*light-grey*/
+}
+
+/* Dotted border */
+hr.line-dotted {
+  border-top: 1px dotted #e0e0e0; /*light-grey*/
+}
+
+/* END_OF_INNOCENCE */
