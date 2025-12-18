@@ -11,14 +11,36 @@ import { isErrorResponse, getErrorCode, getErrorMessage } from './api_utils.js';
 import { API_ERROR_CODES } from './api_constants.js';
 
 /**
+ * Universal helper to extract first data item from response.results
+ * Handles both array and object formats
+ * @param {Object} response - API response
+ * @returns {Object|null} First data item or null
+ */
+function getFirstResult(response) {
+  if (!response?.results) return null;
+  
+  // If results is an array, take first element
+  if (Array.isArray(response.results)) {
+    return response.results[0] || null;
+  }
+  
+  // If results is an object, return it directly
+  if (typeof response.results === 'object') {
+    return response.results;
+  }
+  
+  return null;
+}
+
+/**
  * Extract tokens from auth response
  * @param {Object} response - API response
  * @returns {Object|null} { accessToken, updateToken, tokenExpired, username } or null
  */
 export function extractAuthTokens(response) {
-  if (!response?.results?.[0]) return null;
+  const data = getFirstResult(response);
+  if (!data) return null;
   
-  const data = response.results[0];
   return {
     accessToken: data.accessToken || null,
     updateToken: data.updateToken || null,
@@ -33,8 +55,7 @@ export function extractAuthTokens(response) {
  * @returns {Object|null} User data or null
  */
 export function extractUserData(response) {
-  if (!response?.results?.[0]) return null;
-  return response.results[0];
+  return getFirstResult(response);
 }
 
 /**

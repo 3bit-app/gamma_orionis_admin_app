@@ -68,7 +68,14 @@ export const authService = {
    */
   async login(username, password) {
     const query = buildQueryString({ username, password });
-    const response = await connector.get(`${BASE_URL}/user/login${query}`);
+    const url = `${BASE_URL}/user/login${query}`;
+    
+    console.log('Orionis ★ Auth Service: Calling login API');
+    console.log('Orionis ★ Full URL:', url);
+    
+    const response = await connector.get(url);
+    
+    console.log('Orionis ★ Auth Service: Response received:', response);
     
     if (response?.results?.[0]) {
       const data = response.results[0];

@@ -184,8 +184,10 @@ export const app = {
 
   gotoLogin() {
     currentPageName = "login";
-    connector.loadContent(currentPathname + HTML_AUTH_PATH + currentPageName + ".html", contentId, null);
-    initLoginForm();    
+    connector.loadContent(currentPathname + HTML_AUTH_PATH + currentPageName + ".html", contentId, () => {
+      // Wait for DOM to be ready
+      setTimeout(initLoginForm, 0);
+    });
   },
 
   gotoRegister() {

@@ -6,123 +6,382 @@
  * 3bit.app | 2025
  */
 
-/*
-import { getMainService, getSignInService } from "../services/service_auth.js";
-import { getMessage, getLanguageCode } from "../messages.js";
-import {
-  setCookie, getCookie, encodeData, clearAuth, clearAuthCookie
-} from "../functions.js";
-*/
+import { authService } from '../services/service_auth.js';
+import { connector } from '../connector.js';
+import { getCookie, setCookie, encodeData } from '../functions.js';
+import { extractAuthTokens, extractUserData, validateEmail } from '../auth_helpers.js';
+import { isErrorResponse, getErrorMessage } from '../api_utils.js';
+
+const COOKIE_ACTUAL_DAYS = 365;
+const COOKIE_USERNAME = "Username";
+const COOKIE_PASSWORD = "Password";
+const COOKIE_ACCESS_TOKEN = "AccessToken";
+const COOKIE_UPDATE_TOKEN = "UpdateToken";
+const COOKIE_SAVE_ME = "SaveMe";
+
 export function initLoginForm() {
+  console.log('Orionis ★ Initializing login form - START');
+  
+  // Wait for form to be in DOM
+  const checkFormReady = () => {
+    const form = document.querySelector("#login_form");
+    
+    if (form) {
+      console.log('Orionis ★ Form found in DOM, proceeding with initialization');
+      
+      // Expose functions to app.content first
+      if (window.app) {
+        window.app.content = window.app.content || {};
+        window.app.content.userLogin = handleLogin;
+        window.app.content.loginWithGoogle = handleLoginWithGoogle;
+        window.app.content.loginWithApple = handleLoginWithApple;
+        window.app.content.passwordRecovery = handlePasswordRecovery;
+        window.app.content.saveMe = handleSaveMeToggle;
+        console.log('Orionis ★ app.content functions exposed');
+      } else {
+        console.error('Orionis ★ window.app is not available!');
+      }
 
+      // Load saved credentials if checkbox was checked
+      loadSavedCredentials();
+
+      // Setup event listeners
+      setupEventListeners();
+      
+      console.log('Orionis ★ Login form initialization - COMPLETE');
+    } else {
+      console.warn('Orionis ★ Form not ready yet, retrying...');
+      requestAnimationFrame(checkFormReady);
+    }
+  };
+  
+  requestAnimationFrame(checkFormReady);
+}
+
+function setupEventListeners() {
+  console.log('Orionis ★ Setting up event listeners');
+  
+  // Get form element
   const form = document.querySelector("#login_form");
-  const btnApple = document.querySelector("#button_login_with_apple");
-  const btnGoogle = document.querySelector("#button_login_with_google");
-  const btnCloseError = document.querySelector('[data-close="error"]');
-  const btnCloseSuccess = document.querySelector('[data-close="success"]');
-
-  // ---------------- EVENTS ---------------- //
-
-  //form.addEventListener("submit", onLoginSubmit);
-  //btnApple.addEventListener("click", loginWithApple);
-  //btnGoogle.addEventListener("click", loginWithGoogle);
-
-  //btnCloseError.addEventListener("click", () => hide("#div_error_message"));
-  //btnCloseSuccess.addEventListener("click", () => hide("#div_success_message"));
-
-  //loadSavedCredentials();
-  //updateLanguage(getLanguageCode());
-}
-/*
-function onLoginSubmit(event) {
-  event.preventDefault();
-
-  const username = value("#input_username");
-  const password = value("#input_password");
-  const accessKey = value("#input_access_key");
-
-  if (!username && !accessKey) return error("Enter username or access key");
-  if (!password && !accessKey) return error("Enter password");
-
-  clearAuth();
-  clearAuthCookie();
-
-  const service = getMainService();
-
-  if (username) {
-      service.setUsername(username);
-      service.setPassword(password);
-      service.getUserLogin(null, "#text_error_message", afterLogin);
+  console.log('Orionis ★ Form element found:', form);
+  
+  // Add submit event listener
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      console.log('Orionis ★ Form submit event triggered!');
+      e.preventDefault();
+      e.stopPropagation();
+      await handleLogin();
+      return false;
+    });
+    console.log('Orionis ★ Form submit listener added');
+  } else {
+    console.error('Orionis ★ Form #login_form NOT FOUND!');
   }
-  else if (accessKey) {
-      service.setAccessKey(accessKey);
-      // service.getUserLoginByAccessKey(...)
+
+  // Form fields focus effects
+  const inputUsername = document.querySelector("#input_username");
+  const inputPassword = document.querySelector("#input_password");
+  const inputSaveMe = document.querySelector("#input_save_me");
+
+  console.log('Orionis ★ Input fields:', { username: !!inputUsername, password: !!inputPassword, saveMe: !!inputSaveMe });
+
+  if (inputUsername) {
+    inputUsername.addEventListener('focus', () => hideMessages());
+    inputUsername.addEventListener('input', validateInputs);
+  }
+
+  if (inputPassword) {
+    inputPassword.addEventListener('focus', () => hideMessages());
+    inputPassword.addEventListener('input', validateInputs);
+    
+    // Allow Enter key to submit
+    inputPassword.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        console.log('Orionis ★ Enter key pressed in password field');
+        e.preventDefault();
+        handleLogin();
+      }
+    });
+  }
+
+  if (inputSaveMe) {
+    inputSaveMe.addEventListener('change', handleSaveMeToggle);
+  }
+
+  // Submit button
+  const submitBtn = document.querySelector("#button_submit");
+  console.log('Orionis ★ Submit button found:', submitBtn);
+  
+  if (submitBtn) {
+    submitBtn.addEventListener('click', (e) => {
+      console.log('Orionis ★ Submit button clicked!');
+      e.preventDefault();
+      handleLogin();
+    });
+    console.log('Orionis ★ Submit button listener added');
+  } else {
+    console.error('Orionis ★ Submit button #button_submit NOT FOUND!');
+  }
+
+  // Close buttons
+  const closeErrorBtn = document.querySelector("#div_error_message .white-close-btn");
+  const closeSuccessBtn = document.querySelector("#div_success_message .grey-close-btn");
+
+  if (closeErrorBtn) {
+    closeErrorBtn.addEventListener('click', () => hideError());
+  }
+
+  if (closeSuccessBtn) {
+    closeSuccessBtn.addEventListener('click', () => hideSuccess());
+  }
+  
+  console.log('Orionis ★ Event listeners setup complete');
+}
+
+async function handleLogin() {
+  const username = getValue("#input_username");
+  const password = getValue("#input_password");
+
+  // Validation
+  if (!username) {
+    showError('Please enter username or email');
+    return false;
+  }
+
+  if (!password) {
+    showError('Please enter password');
+    return false;
+  }
+
+  // Show loading state
+  setLoginButtonState(true);
+  hideMessages();
+
+  try {
+    console.log('Orionis ★ Attempting login with username:', username);
+    console.log('Orionis ★ API Base URL:', 'https://3bit.app/service/auth/v1');
+
+    // Call login API
+    const response = await authService.login(username, password);
+    console.log('Orionis ★ Login API response:', response);
+
+    if (isErrorResponse(response)) {
+      const errorMsg = getErrorMessage(response);
+      console.warn('Orionis ★ Login failed:', errorMsg);
+      showError(errorMsg || 'Login failed. Please check your credentials.');
+      setLoginButtonState(false);
+      return false;
+    }
+
+    // Extract tokens
+    console.log('Orionis ★ Response.results:', response.results);
+    const tokens = extractAuthTokens(response);
+    console.log('Orionis ★ Extracted tokens:', tokens);
+
+    if (!tokens?.accessToken) {
+      console.error('Orionis ★ No access token in tokens:', tokens);
+      showError('Login failed: No access token received');
+      setLoginButtonState(false);
+      return false;
+    }
+
+    console.log('Orionis ★ Login successful');
+
+    // Save credentials if checkbox is checked
+    const saveMe = document.querySelector("#input_save_me")?.checked || false;
+    if (saveMe) {
+      saveCredentials(username, password, tokens);
+    } else {
+      clearSavedCredentials();
+    }
+
+    // Save tokens to cookies
+    setCookie(COOKIE_ACCESS_TOKEN, tokens.accessToken, COOKIE_ACTUAL_DAYS);
+    if (tokens.updateToken) {
+      setCookie(COOKIE_UPDATE_TOKEN, tokens.updateToken, COOKIE_ACTUAL_DAYS);
+    }
+
+    // Set tokens in service
+    authService.setAccessToken(tokens.accessToken);
+    if (tokens.updateToken) {
+      authService.setUpdateToken(tokens.updateToken);
+    }
+
+    // Get user info
+    const userResponse = await authService.getUser();
+
+    if (!isErrorResponse(userResponse)) {
+      const user = extractUserData(userResponse);
+      window.app.setCurrentUser(user);
+      
+      showSuccess('Login successful! Redirecting...');
+
+      // Redirect to dashboard after short delay
+      setTimeout(() => {
+        gotoDashboard();
+      }, 800);
+
+      return true;
+    } else {
+      showError('Failed to load user data');
+      setLoginButtonState(false);
+      return false;
+    }
+
+  } catch (error) {
+    console.error('Orionis ★ Login error:', error);
+    showError('An error occurred. Please try again.');
+    setLoginButtonState(false);
+    return false;
   }
 }
 
-function afterLogin(_, res) {
-  if (!res || res.status !== "success") return;
+async function handleLoginWithGoogle() {
+  hideMessages();
+  showSuccess('Google Sign-In integration coming soon...');
+  
+  // TODO: Implement Google Sign-In
+  // const response = await authService.loginWithGoogle(idToken);
+  
+  console.log('Orionis ★ Google Sign-In clicked');
+}
 
-  const s = getMainService();
-  const t = res.results[0];
+async function handleLoginWithApple() {
+  hideMessages();
+  showSuccess('Apple Sign-In integration coming soon...');
+  
+  // TODO: Implement Apple Sign-In
+  
+  console.log('Orionis ★ Apple Sign-In clicked');
+}
 
-  s.setAccessToken(t.accessToken);
-  s.setUpdateToken(t.updateToken);
+function handlePasswordRecovery() {
+  hideMessages();
+  showSuccess('Password recovery: Check your email for reset instructions');
+  
+  // TODO: Navigate to password recovery page
+  console.log('Orionis ★ Password recovery clicked');
+}
 
-  setCookie("ACCESS_TOKEN", t.accessToken, 30);
-  setCookie("UPDATE_TOKEN", t.updateToken, 30);
+function handleSaveMeToggle(event) {
+  const checked = event.target.checked;
+  setCookie(COOKIE_SAVE_ME, checked ? "true" : "false", COOKIE_ACTUAL_DAYS);
+  console.log('Orionis ★ Save me:', checked);
+}
 
-  window.dispatchEvent(new Event("ajaxStop")); // simulate old jQuery ajaxStop
+function saveCredentials(username, password, tokens) {
+  setCookie(COOKIE_USERNAME, username, COOKIE_ACTUAL_DAYS);
+  setCookie(COOKIE_PASSWORD, encodeData(username, password), COOKIE_ACTUAL_DAYS);
+  setCookie(COOKIE_SAVE_ME, "true", COOKIE_ACTUAL_DAYS);
+  console.log('Orionis ★ Credentials saved');
+}
+
+function clearSavedCredentials() {
+  setCookie(COOKIE_USERNAME, "", 0);
+  setCookie(COOKIE_PASSWORD, "", 0);
+  setCookie(COOKIE_SAVE_ME, "false", COOKIE_ACTUAL_DAYS);
 }
 
 function loadSavedCredentials() {
-  const save = getCookie("SAVE_ME") === "true";
-  value("#input_save_me", save);
+  const saveMe = getCookie(COOKIE_SAVE_ME) === "true";
+  const saveMeCheckbox = document.querySelector("#input_save_me");
+  
+  if (saveMeCheckbox) {
+    saveMeCheckbox.checked = saveMe;
+  }
 
-  if (!save) return;
+  if (!saveMe) return;
 
-  value("#input_username", getCookie("USERNAME"));
-  value("#input_password", encodeData(getCookie("USERNAME"), getCookie("PASSWORD")));
-  value("#input_access_key", getCookie("ACCESS_KEY"));
+  const savedUsername = getCookie(COOKIE_USERNAME);
+  const savedPassword = getCookie(COOKIE_PASSWORD);
+
+  if (savedUsername) {
+    setValue("#input_username", savedUsername);
+  }
+
+  if (savedPassword && savedUsername) {
+    // Decode password
+    const decodedPassword = encodeData(savedUsername, savedPassword);
+    setValue("#input_password", decodedPassword);
+  }
+
+  console.log('Orionis ★ Loaded saved credentials');
 }
 
-function loginWithApple() {
-  const s = getSignInService();
-  s.setSignInProvider("APPLE");
-  s.initService();
-  s.signInWithPopup("#text_error_message", afterLogin);
+function validateInputs() {
+  const username = getValue("#input_username");
+  const password = getValue("#input_password");
+  const submitBtn = document.querySelector("#button_submit");
+
+  // Enable/disable submit button based on input
+  if (submitBtn) {
+    if (username && password) {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('disabled');
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.classList.add('disabled');
+    }
+  }
 }
 
-function loginWithGoogle() {
-  const s = getSignInService();
-  s.setSignInProvider("GOOGLE");
-  s.initService();
-  s.signInWithPopup("#text_error_message", afterLogin);
+function setLoginButtonState(loading) {
+  const submitBtn = document.querySelector("#button_submit");
+  
+  if (!submitBtn) return;
+
+  if (loading) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Logging in...';
+  } else {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Login';
+  }
 }
 
-// ---------------- UTIL ---------------- //
+function gotoDashboard() {
+  connector.loadContent('html/forms/dashboard.html', '#div_content', null);
+}
 
-function value(selector, set) {
+// UI Helper functions
+function getValue(selector) {
   const el = document.querySelector(selector);
-  if (!el) return "";
-  if (set !== undefined) el.value = set;
-  return el.value.trim();
+  return el ? el.value.trim() : '';
 }
 
-function error(msg) {
-  document.querySelector("#text_error_message").textContent = msg;
-  show("#div_error_message");
+function setValue(selector, value) {
+  const el = document.querySelector(selector);
+  if (el) el.value = value;
 }
 
-function show(sel) {
-  document.querySelector(sel).style.display = "block";
+function showError(message) {
+  const errorDiv = document.querySelector("#div_error_message");
+  const errorText = document.querySelector("#text_error_message");
+  
+  if (errorText) errorText.textContent = message;
+  if (errorDiv) errorDiv.style.display = 'block';
 }
 
-function hide(sel) {
-  document.querySelector(sel).style.display = "none";
+function hideError() {
+  const errorDiv = document.querySelector("#div_error_message");
+  if (errorDiv) errorDiv.style.display = 'none';
 }
 
-function updateLanguage(lang) {
-  document.querySelector("#text_login").textContent = getMessage(lang, 1051);
+function showSuccess(message) {
+  const successDiv = document.querySelector("#div_success_message");
+  const successText = document.querySelector("#text_success_message");
+  
+  if (successText) successText.textContent = message;
+  if (successDiv) successDiv.style.display = 'block';
 }
-*/
+
+function hideSuccess() {
+  const successDiv = document.querySelector("#div_success_message");
+  if (successDiv) successDiv.style.display = 'none';
+}
+
+function hideMessages() {
+  hideError();
+  hideSuccess();
+}

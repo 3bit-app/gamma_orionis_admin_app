@@ -1,0 +1,187 @@
+<!--
+   Gamma Orionis ★ (Bellātrix) HTML Form
+   Bellātrix The White Blue Giant, The Lion warrior, Conqueror
+   Amon Ra Eye
+   Dashboard v.1.0.0 (ESM)
+   3bit.app | 2025
+-->
+
+<!-- dashboard_content -->
+<div class="container mt-4">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col">
+      <h2><i class="fa fa-dashboard"></i> Dashboard</h2>
+      <p class="text-muted">Welcome to Gamma Orionis Admin Panel</p>
+    </div>
+    <div class="col-auto">
+      <button class="btn btn-outline-danger" onclick="app.logout()">
+        <i class="fa fa-sign-out"></i> Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Users</h5>
+          <p class="card-text display-4">--</p>
+          <small>Total registered users</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Active</h5>
+          <p class="card-text display-4">--</p>
+          <small>Active sessions</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-warning mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Orders</h5>
+          <p class="card-text display-4">--</p>
+          <small>Pending orders</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-info mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Revenue</h5>
+          <p class="card-text display-4">$--</p>
+          <small>This month</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="row mb-4">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h5><i class="fa fa-bolt"></i> Quick Actions</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3 mb-2">
+              <button class="btn btn-outline-primary w-100" onclick="app.gotoAdmin()">
+                <i class="fa fa-users"></i><br>Manage Users
+              </button>
+            </div>
+            <div class="col-md-3 mb-2">
+              <button class="btn btn-outline-success w-100" onclick="app.gotoCalendar()">
+                <i class="fa fa-calendar"></i><br>Calendar
+              </button>
+            </div>
+            <div class="col-md-3 mb-2">
+              <button class="btn btn-outline-warning w-100" onclick="app.gotoMap()">
+                <i class="fa fa-map"></i><br>Map View
+              </button>
+            </div>
+            <div class="col-md-3 mb-2">
+              <button class="btn btn-outline-info w-100" onclick="app.gotoCabinet()">
+                <i class="fa fa-cog"></i><br>Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h5><i class="fa fa-clock-o"></i> Recent Activity</h5>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info" role="alert">
+            <i class="fa fa-info-circle"></i> No recent activity to display
+          </div>
+          <p class="text-muted">Activity log will appear here...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h5><i class="fa fa-user"></i> User Info</h5>
+        </div>
+        <div class="card-body">
+          <div id="user-info">
+            <p><strong>Username:</strong> <span id="user-username">--</span></p>
+            <p><strong>Email:</strong> <span id="user-email">--</span></p>
+            <p><strong>Role:</strong> <span id="user-role">--</span></p>
+            <p><strong>Status:</strong> <span id="user-status" class="badge bg-success">Active</span></p>
+          </div>
+          <hr>
+          <button class="btn btn-sm btn-outline-primary w-100" onclick="app.gotoCabinet()">
+            <i class="fa fa-edit"></i> Edit Profile
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Status -->
+  <div class="row mt-4">
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          <h5><i class="fa fa-server"></i> System Status</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <p><strong>API Status:</strong> <span class="badge bg-success">Online</span></p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>Database:</strong> <span class="badge bg-success">Connected</span></p>
+            </div>
+            <div class="col-md-4">
+              <p><strong>Services:</strong> <span class="badge bg-success">Running</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- dashboard_script -->
+<script>
+(function() {
+  // Load user info
+  const user = app.getCurrentUser();
+  
+  if (user) {
+    document.getElementById('user-username').textContent = user.username || '--';
+    document.getElementById('user-email').textContent = user.email || '--';
+    document.getElementById('user-role').textContent = user.role?.name || '--';
+    
+    const statusBadge = document.getElementById('user-status');
+    if (user.activated) {
+      statusBadge.textContent = 'Active';
+      statusBadge.className = 'badge bg-success';
+    } else {
+      statusBadge.textContent = 'Inactive';
+      statusBadge.className = 'badge bg-warning';
+    }
+  }
+
+  console.log('Orionis ★ Dashboard loaded');
+})();
+</script>
+<!-- end_dashboard_script -->
