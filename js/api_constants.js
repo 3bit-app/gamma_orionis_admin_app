@@ -6,16 +6,18 @@
  * 3bit.app | 2025
  */
 
-// API Base URLs
-export const API_BASE_URL = 'https://3bit.app';
+import { getApiBaseUrl } from './config.js';
+
+// API Base URL (environment-aware, already includes /service)
+export const API_BASE_URL = getApiBaseUrl();
 export const API_VERSION = 'v1';
 
-// Service paths
+// Service paths (relative to API_BASE_URL)
 export const SERVICE_PATHS = {
-  AUTH: '/service/auth/v1',
-  ANALYTIC: '/service/analytic/v1',
-  MARKET: '/service/market/v1',
-  SUPPORT: '/service/support/v1',
+  AUTH: '/auth/v1',
+  ANALYTIC: '/analytic/v1',
+  MARKET: '/market/v1',
+  SUPPORT: '/support/v1',
 };
 
 // Error codes mapping

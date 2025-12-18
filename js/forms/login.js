@@ -11,6 +11,7 @@ import { connector } from '../connector.js';
 import { getCookie, setCookie, encodeData } from '../functions.js';
 import { extractAuthTokens, extractUserData, validateEmail } from '../auth_helpers.js';
 import { isErrorResponse, getErrorMessage } from '../api_utils.js';
+import { API_BASE_URL, SERVICE_PATHS } from '../api_constants.js';
 
 const COOKIE_ACTUAL_DAYS = 365;
 const COOKIE_USERNAME = "Username";
@@ -160,7 +161,7 @@ async function handleLogin() {
 
   try {
     console.log('Orionis ★ Attempting login with username:', username);
-    console.log('Orionis ★ API Base URL:', 'https://3bit.app/service/auth/v1');
+    console.log('Orionis ★ API Base URL:', API_BASE_URL + SERVICE_PATHS.AUTH);
 
     // Call login API
     const response = await authService.login(username, password);

@@ -16,7 +16,7 @@ import { API_ERROR_CODES } from './api_constants.js';
  * @param {Object} response - API response
  * @returns {Object|null} First data item or null
  */
-function getFirstResult(response) {
+export function getFirstResult(response) {
   if (!response?.results) return null;
   
   // If results is an array, take first element

@@ -208,18 +208,33 @@ async function doRequest(opts) {
       return await handle401(opts);
     }
 
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    // Response
+    // Parse response based on type
     let result;
-    if (responseType === 'blob') result = await response.blob();
-    else if (responseType === 'text') result = await response.text();
-    else if (responseType === 'json') result = await response.json();
-    else {
+    if (responseType === 'blob') {
+      result = await response.blob();
+    } else if (responseType === 'text') {
+      result = await response.text();
+    } else if (responseType === 'json') {
+      result = await response.json();
+    } else {
       const contentType = response.headers.get('content-type') || '';
-      if (contentType.includes('application/json')) result = await response.json();
-      else result = await response.text();
+      if (contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        result = await response.text();
+      }
     }
+
+    // If HTTP error but got JSON response (API error format), return it
+    if (!response.ok && typeof result === 'object' && result.status === 'error') {
+      return result;
+    }
+
+    // For other HTTP errors, throw
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
     return result;
 
   } catch (err) {

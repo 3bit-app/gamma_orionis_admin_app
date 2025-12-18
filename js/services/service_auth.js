@@ -9,6 +9,7 @@
 import { connector } from '../connector.js';
 import { API_BASE_URL, SERVICE_PATHS } from '../api_constants.js';
 import { buildQueryString, buildAuthHeader, buildHeaders } from '../api_utils.js';
+import { extractAuthTokens } from '../auth_helpers.js';
 
 const BASE_URL = API_BASE_URL + SERVICE_PATHS.AUTH;
 
@@ -77,11 +78,10 @@ export const authService = {
     
     console.log('Orionis ★ Auth Service: Response received:', response);
     
-    if (response?.results?.[0]) {
-      const data = response.results[0];
-      if (data.accessToken) this.setAccessToken(data.accessToken);
-      if (data.updateToken) this.setUpdateToken(data.updateToken);
-    }
+    // Extract tokens using universal helper (handles both array and object)
+    const tokens = extractAuthTokens(response);
+    if (tokens?.accessToken) this.setAccessToken(tokens.accessToken);
+    if (tokens?.updateToken) this.setUpdateToken(tokens.updateToken);
     
     return response;
   },
@@ -125,8 +125,17 @@ export const authService = {
    * @returns {Promise<Object>} User data
    */
   async getUser() {
+    const url = `${BASE_URL}/user/me`;
+    
+    console.log('Orionis ★ Auth Service: Calling getUser API');
+    console.log('Orionis ★ Full URL:', url);
+    
     const headers = buildAuthHeader(accessToken);
-    return await connector.get(`${BASE_URL}/user/me`, { headers });
+    const response = await connector.get(url, { headers });
+    
+    console.log('Orionis ★ Auth Service: Response received:', response);
+    
+    return response;
   },
 
   /**
