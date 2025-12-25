@@ -19,24 +19,25 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.0/moment-with-locales.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="js/moment/moment-tz-data.min.js"></script>
-    <!-- Firebase SDK via jsDelivr CDN -->
-    <script defer src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/app/dist/firebase-app.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/auth/dist/firebase-auth.js"></script>
+    <!-- Firebase SDK compat build with fallback -->
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" onerror="(function(){var s=document.createElement('script');s.defer=true;s.src='https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js';document.head.appendChild(s);})();"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" onerror="(function(){var s=document.createElement('script');s.defer=true;s.src='https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-auth-compat.js';document.head.appendChild(s);})();"></script>
     <!-- Wait for Firebase SDK before loading app modules -->
     <script>
-      console.log('Orionis ★ Setting up Firebase SDK detection...');
+      console.log('Orionis ★ Setting up Firebase SDK detection (compat build)...');
       window.firebaseReady = new Promise((resolve) => {
         let attempts = 0;
-        const maxAttempts = 100; // 20 seconds with 200ms interval
+        const maxAttempts = 120; // 24 seconds with 200ms interval
         const checkFirebase = setInterval(() => {
           attempts++;
-          if (window.firebase && window.firebase.initializeApp) {
+          const ready = window.firebase && window.firebase.initializeApp;
+          if (ready) {
             clearInterval(checkFirebase);
             console.log('Orionis ★ Firebase SDK detected after', attempts, 'attempts');
             resolve(true);
           } else if (attempts >= maxAttempts) {
             clearInterval(checkFirebase);
-            console.error('Orionis ★ Firebase SDK not available after', attempts, 'attempts (20 seconds)');
+            console.error('Orionis ★ Firebase SDK not available after', attempts, 'attempts (~24 seconds)');
             resolve(false);
           }
         }, 200);
