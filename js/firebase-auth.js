@@ -27,12 +27,29 @@ export async function initializeFirebase() {
   try {
     console.log('Orionis ★ Initializing Firebase...');
 
-    // Dynamically load Firebase SDK
+    // Wait for Firebase SDK to be available globally
     if (!window.firebase) {
-      await loadFirebaseSDK();
+      console.warn('Orionis ★ Firebase SDK not loaded, waiting...');
+      await new Promise(resolve => {
+        const checkFirebase = setInterval(() => {
+          if (window.firebase) {
+            clearInterval(checkFirebase);
+            resolve();
+          }
+        }, 100);
+        // Timeout after 5 seconds
+        setTimeout(() => {
+          clearInterval(checkFirebase);
+          resolve();
+        }, 5000);
+      });
     }
 
     const firebase = window.firebase;
+
+    if (!firebase) {
+      throw new Error('Firebase SDK failed to load');
+    }
 
     // Initialize Firebase app
     firebaseApp = firebase.initializeApp(firebaseConfig);
