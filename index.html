@@ -19,25 +19,27 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.0/moment-with-locales.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="js/moment/moment-tz-data.min.js"></script>
-    <!-- Firebase SDK (loaded before modules) -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+    <!-- Firebase SDK (loaded before modules) - Using defer to ensure proper loading -->
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
     <!-- Wait for Firebase SDK before loading app modules -->
     <script>
+      console.log('Orionis ★ Setting up Firebase SDK detection...');
       window.firebaseReady = new Promise((resolve) => {
+        let attempts = 0;
+        const maxAttempts = 100; // 20 seconds with 200ms interval
         const checkFirebase = setInterval(() => {
-          if (window.firebase) {
+          attempts++;
+          if (window.firebase && window.firebase.initializeApp) {
             clearInterval(checkFirebase);
-            console.log('Orionis ★ Firebase SDK is available');
+            console.log('Orionis ★ Firebase SDK detected after', attempts, 'attempts');
             resolve(true);
+          } else if (attempts >= maxAttempts) {
+            clearInterval(checkFirebase);
+            console.error('Orionis ★ Firebase SDK not available after', attempts, 'attempts (20 seconds)');
+            resolve(false);
           }
-        }, 100);
-        // Timeout after 10 seconds
-        setTimeout(() => {
-          clearInterval(checkFirebase);
-          console.warn('Orionis ★ Firebase SDK timeout');
-          resolve(false);
-        }, 10000);
+        }, 200);
       });
     </script>
     <style>
