@@ -12,6 +12,7 @@ import { getCookie, setCookie, encodeData } from '../functions.js';
 import { extractAuthTokens, extractUserData, validateEmail } from '../auth_helpers.js';
 import { isErrorResponse, getErrorMessage } from '../api_utils.js';
 import { API_BASE_URL, SERVICE_PATHS } from '../api_constants.js';
+import { signInWithGoogle, signOutFromFirebase } from '../firebase-auth.js';
 
 const COOKIE_ACTUAL_DAYS = 365;
 const COOKIE_USERNAME = "Username";
@@ -240,12 +241,86 @@ async function handleLogin() {
 
 async function handleLoginWithGoogle() {
   hideMessages();
-  showSuccess('Google Sign-In integration coming soon...');
+  setLoginButtonState(true);
   
-  // TODO: Implement Google Sign-In
-  // const response = await authService.loginWithGoogle(idToken);
-  
-  console.log('Orionis ★ Google Sign-In clicked');
+  try {
+    console.log('Orionis ★ Starting Google Sign-In');
+    
+    // Sign in with Google Firebase
+    const googleResult = await signInWithGoogle();
+    console.log('Orionis ★ Google Sign-In successful:', googleResult.user.email);
+    console.log('Orionis ★ ID Token received');
+    
+    // Call API with ID token
+    const response = await authService.loginWithGoogle(googleResult.idToken);
+    console.log('Orionis ★ API response:', response);
+    
+    if (isErrorResponse(response)) {
+      const errorMsg = getErrorMessage(response);
+      console.warn('Orionis ★ Google login API failed:', errorMsg);
+      
+      // Sign out from Firebase if API fails
+      await signOutFromFirebase();
+      
+      showError(errorMsg || 'Google login failed. Please try again.');
+      setLoginButtonState(false);
+      return false;
+    }
+    
+    // Extract tokens
+    console.log('Orionis ★ Response.results:', response.results);
+    const tokens = extractAuthTokens(response);
+    console.log('Orionis ★ Extracted tokens:', tokens);
+    
+    if (!tokens?.accessToken) {
+      console.error('Orionis ★ No access token in tokens:', tokens);
+      await signOutFromFirebase();
+      showError('Login failed: No access token received');
+      setLoginButtonState(false);
+      return false;
+    }
+    
+    console.log('Orionis ★ Google login successful');
+    
+    // Save tokens to cookies
+    setCookie(COOKIE_ACCESS_TOKEN, tokens.accessToken, COOKIE_ACTUAL_DAYS);
+    if (tokens.updateToken) {
+      setCookie(COOKIE_UPDATE_TOKEN, tokens.updateToken, COOKIE_ACTUAL_DAYS);
+    }
+    
+    // Set tokens in service
+    authService.setAccessToken(tokens.accessToken);
+    if (tokens.updateToken) {
+      authService.setUpdateToken(tokens.updateToken);
+    }
+    
+    // Get user info
+    const userResponse = await authService.getUser();
+    
+    if (!isErrorResponse(userResponse)) {
+      const user = extractUserData(userResponse);
+      window.app.setCurrentUser(user);
+      
+      showSuccess('Google login successful! Redirecting...');
+      
+      // Redirect to dashboard after short delay
+      setTimeout(() => {
+        gotoDashboard();
+      }, 800);
+      
+      return true;
+    } else {
+      showError('Failed to load user data');
+      setLoginButtonState(false);
+      return false;
+    }
+    
+  } catch (error) {
+    console.error('Orionis ★ Google Sign-In error:', error);
+    showError(error.message || 'Google Sign-In failed. Please try again.');
+    setLoginButtonState(false);
+    return false;
+  }
 }
 
 async function handleLoginWithApple() {

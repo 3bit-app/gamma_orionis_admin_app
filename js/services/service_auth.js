@@ -218,6 +218,15 @@ export const authService = {
   },
 
   /**
+   * Register new user with Google ID token
+   * @param {string} idToken - Google ID token from Firebase
+   * @returns {Promise<Object>} Registration response with tokens
+   */
+  async registerWithGoogle(idToken) {
+    return await connector.post(`${BASE_URL}/register/with/google`, { idToken });
+  },
+
+  /**
    * Complete user registration (send confirmation code)
    * @param {string} newEmail - Email
    * @param {string} languageCode - Language code
