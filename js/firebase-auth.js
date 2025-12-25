@@ -27,29 +27,13 @@ export async function initializeFirebase() {
   try {
     console.log('Orionis ★ Initializing Firebase...');
 
-    // Wait for Firebase SDK to be available globally
-    if (!window.firebase) {
-      console.warn('Orionis ★ Firebase SDK not loaded, waiting...');
-      await new Promise(resolve => {
-        const checkFirebase = setInterval(() => {
-          if (window.firebase) {
-            clearInterval(checkFirebase);
-            resolve();
-          }
-        }, 100);
-        // Timeout after 5 seconds
-        setTimeout(() => {
-          clearInterval(checkFirebase);
-          resolve();
-        }, 5000);
-      });
+    // Wait for Firebase SDK to be available (promise set in index.html)
+    const ready = await window.firebaseReady;
+    if (!ready || !window.firebase) {
+      throw new Error('Firebase SDK is not available');
     }
 
     const firebase = window.firebase;
-
-    if (!firebase) {
-      throw new Error('Firebase SDK failed to load');
-    }
 
     // Initialize Firebase app
     firebaseApp = firebase.initializeApp(firebaseConfig);
@@ -73,40 +57,6 @@ export async function initializeFirebase() {
     console.error('Orionis ★ Firebase initialization failed:', error);
     return false;
   }
-}
-
-/**
- * Load Firebase SDK dynamically
- * @returns {Promise<void>}
- */
-function loadFirebaseSDK() {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    
-    script.onload = () => {
-      // Load Firebase Auth
-      const authScript = document.createElement('script');
-      authScript.src = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-      
-      authScript.onload = () => {
-        console.log('Orionis ★ Firebase SDKs loaded');
-        resolve();
-      };
-      
-      authScript.onerror = () => {
-        reject(new Error('Failed to load Firebase Auth SDK'));
-      };
-      
-      document.head.appendChild(authScript);
-    };
-    
-    script.onerror = () => {
-      reject(new Error('Failed to load Firebase App SDK'));
-    };
-    
-    document.head.appendChild(script);
-  });
 }
 
 /**

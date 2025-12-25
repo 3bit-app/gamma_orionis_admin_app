@@ -22,6 +22,24 @@
     <!-- Firebase SDK (loaded before modules) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+    <!-- Wait for Firebase SDK before loading app modules -->
+    <script>
+      window.firebaseReady = new Promise((resolve) => {
+        const checkFirebase = setInterval(() => {
+          if (window.firebase) {
+            clearInterval(checkFirebase);
+            console.log('Orionis ★ Firebase SDK is available');
+            resolve(true);
+          }
+        }, 100);
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          clearInterval(checkFirebase);
+          console.warn('Orionis ★ Firebase SDK timeout');
+          resolve(false);
+        }, 10000);
+      });
+    </script>
     <style>
       /* google font */
       body {
